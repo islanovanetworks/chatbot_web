@@ -21,6 +21,8 @@
             --text-primary: #ffffff;
             --text-secondary: #b8d4c2;
             --border-color: #2d4a3d;
+            --warning-color: #ff6b6b;
+            --success-color: #51cf66;
         }
 
         body {
@@ -31,6 +33,58 @@
             min-height: 100vh;
         }
 
+        /* Webhook Configuration Panel */
+        .webhook-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(26, 77, 58, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+        }
+
+        .webhook-panel h4 {
+            color: var(--light-green);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .webhook-input {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .webhook-status {
+            font-size: 0.8rem;
+            padding: 0.3rem;
+            border-radius: 3px;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .status-disconnected {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--warning-color);
+            border: 1px solid var(--warning-color);
+        }
+
+        .status-connected {
+            background: rgba(81, 207, 102, 0.2);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
         /* Header */
         .header {
             background: rgba(26, 77, 58, 0.95);
@@ -39,7 +93,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            z-index: 1000;
+            z-index: 999;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
@@ -174,11 +228,37 @@
             text-decoration: none;
             display: inline-block;
             box-shadow: 0 4px 15px rgba(64, 165, 120, 0.3);
+            margin: 0.5rem;
         }
 
         .cta-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 25px rgba(64, 165, 120, 0.4);
+        }
+
+        .cta-secondary {
+            background: linear-gradient(45deg, var(--primary-green), var(--secondary-green));
+            border: 2px solid var(--accent-green);
+        }
+
+        .ai-cta-section {
+            background: rgba(255, 193, 7, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 3rem 0;
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            text-align: center;
+        }
+
+        .ai-cta-section h3 {
+            color: #ffc107;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .ai-cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
         }
 
         /* Products Section */
@@ -342,6 +422,19 @@
             border-radius: 10px;
             max-width: 80%;
             word-wrap: break-word;
+            opacity: 0;
+            animation: messageSlide 0.3s ease forwards;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.bot {
@@ -356,6 +449,13 @@
             color: white;
             align-self: flex-end;
             margin-left: auto;
+        }
+
+        .message.loading {
+            background: rgba(26, 77, 58, 0.6);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-style: italic;
         }
 
         .chatbot-input {
@@ -381,6 +481,11 @@
             box-shadow: 0 0 0 2px rgba(64, 165, 120, 0.2);
         }
 
+        .chatbot-input input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .chatbot-input button {
             padding: 0.8rem 1rem;
             background: linear-gradient(45deg, var(--accent-green), var(--light-green));
@@ -389,6 +494,11 @@
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
+        }
+
+        .chatbot-input button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         /* Footer */
@@ -427,10 +537,55 @@
             .products-grid {
                 grid-template-columns: 1fr;
             }
+
+            .webhook-panel {
+                position: static;
+                margin: 1rem;
+                max-width: none;
+            }
+        }
+
+        .typing-indicator {
+            display: inline-block;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+            animation: typing 1.4s infinite ease-in-out;
+            margin: 0 2px;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Webhook Configuration Panel -->
+    <div class="webhook-panel">
+        <h4>🔗 Configuración Webhook n8n</h4>
+        <input type="url" class="webhook-input" id="webhookUrl" 
+               placeholder="https://tu-ngrok-url.com/webhook/chatbot" 
+               value="">
+        <div class="webhook-status status-disconnected" id="webhookStatus">
+            ⚠️ Webhook no configurado
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
@@ -449,9 +604,20 @@
             <div class="demo-badge">🤖 DEMO INTERACTIVA - TIENDA FICTICIA</div>
             <h1>Bienvenido a NovaShop</h1>
             <p>Descubre nuestra selección de tecnología de vanguardia. Esta es una tienda de demostración para probar NovaBot, nuestro asistente de IA conversacional.</p>
+            
+            <div class="ai-cta-section">
+                <h3>🚀 ¿Quieres una IA totalmente adaptada a tus necesidades?</h3>
+                <p>Construimos asistentes inteligentes, automatizaciones y soluciones personalizadas para escalar tu negocio.</p>
+                <a href="https://www.islanovanetworks.com/contacto-inteligencia-artificial" 
+                   class="cta-button" target="_blank" rel="noopener">
+                   Hablemos - Consulta Gratuita
+                </a>
+            </div>
+
             <div style="background: rgba(255, 193, 7, 0.1); padding: 1rem; border-radius: 10px; margin: 2rem 0; border: 1px solid rgba(255, 193, 7, 0.3);">
                 <strong style="color: #ffc107;">💡 Usa NovaBot en tu web con un diseño totalmente personalizado</strong>
             </div>
+            
             <a href="#productos" class="cta-button">Explorar Productos</a>
         </div>
     </section>
@@ -516,7 +682,7 @@
             <strong>⚠️ AVISO:</strong> Esta es una tienda ficticia creada únicamente para demostrar las capacidades de NovaBot. Los productos y precios mostrados no son reales.
         </div>
         <p>&copy; 2025 NovaShop - Tienda de Demostración | Powered by NovaBot</p>
-        <p>Para implementar NovaBot en tu sitio web real, visita islanovanetworks.com</p>
+        <p>Para implementar NovaBot en tu sitio web real, visita <a href="https://www.islanovanetworks.com" target="_blank" style="color: var(--accent-green);">islanovanetworks.com</a></p>
     </footer>
 
     <!-- ChatBot -->
@@ -528,17 +694,13 @@
                 <button onclick="toggleChatbot()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">×</button>
             </div>
             <div class="chatbot-messages" id="chatbotMessages">
-                <div class="message bot">¡Hola! Soy NovaBot, tu asistente IA. Estoy aquí como ejemplo de lo que podemos construir para tu negocio: asistentes, automatizaciones y soluciones inteligentes personalizadas. ¿Quieres ver cómo podría ayudarte a escalar tu empresa?
-<div style="padding: 1rem; text-align: center;">
-    <a href="https://www.islanovanetworks.com/contacto-inteligencia-artificial" target="_blank" class="cta-button" style="font-size: 0.9rem; padding: 0.7rem 1.5rem; margin-top: 0.5rem; display: inline-block;">
-        ¿Quieres una IA como esta para tu negocio? Hablemos.
-    </a>
-</div>
-</div> <!-- cierre chatbot-window -->
-
+                <div class="message bot">
+                    ¡Hola! Soy NovaBot, tu asistente IA. Estoy aquí como ejemplo de lo que podemos construir para tu negocio: asistentes, automatizaciones y soluciones inteligentes personalizadas. ¿Quieres ver cómo podría ayudarte a escalar tu empresa?
+                </div>
+            </div>
             <div class="chatbot-input">
                 <input type="text" id="chatInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
-                <button onclick="sendMessage()">Enviar</button>
+                <button onclick="sendMessage()" id="sendButton">Enviar</button>
             </div>
         </div>
     </div>
@@ -546,6 +708,33 @@
     <script>
         let chatbotOpen = false;
         let cart = [];
+        let isWaitingForResponse = false;
+
+        // Configuración del webhook
+        const webhookUrlInput = document.getElementById('webhookUrl');
+        const webhookStatus = document.getElementById('webhookStatus');
+
+        webhookUrlInput.addEventListener('input', function() {
+            const url = this.value.trim();
+            if (url && isValidUrl(url)) {
+                webhookStatus.textContent = '✅ Webhook configurado';
+                webhookStatus.className = 'webhook-status status-connected';
+            } else {
+                webhookStatus.textContent = '⚠️ Webhook no configurado';
+                webhookStatus.className = 'webhook-status status-disconnected';
+            }
+    </script>
+</body>
+</html>
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
 
         function toggleChatbot() {
             const window = document.getElementById('chatbotWindow');
@@ -558,95 +747,141 @@
         }
 
         function handleKeyPress(event) {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !isWaitingForResponse) {
                 sendMessage();
             }
         }
 
-        function addMessage(message, isUser = false) {
+        function addMessage(message, isUser = false, isLoading = false) {
             const messagesContainer = document.getElementById('chatbotMessages');
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-            messageDiv.textContent = message;
+            
+            if (isLoading) {
+                messageDiv.className = 'message loading';
+                messageDiv.innerHTML = `
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    NovaBot está escribiendo...
+                `;
+            } else {
+                messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+                messageDiv.textContent = message;
+            }
+            
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return messageDiv;
+        }
+
+        function removeMessage(messageElement) {
+            if (messageElement && messageElement.parentNode) {
+                messageElement.parentNode.removeChild(messageElement);
+            }
         }
 
         function addToCart(product) {
             cart.push(product);
-            addMessage(`✅ ${product} ha sido añadido al carrito. Total de productos: ${cart.length}`, false);
+            const confirmationMessage = `✅ ${product} ha sido añadido al carrito. Total de productos: ${cart.length}`;
             
             if (!chatbotOpen) {
                 toggleChatbot();
+                // Esperar un poco para que se abra el chat antes de mostrar el mensaje
+                setTimeout(() => {
+                    addMessage(confirmationMessage, false);
+                }, 300);
+            } else {
+                addMessage(confirmationMessage, false);
             }
         }
 
         async function sendMessage() {
             const input = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
             const message = input.value.trim();
             
-            if (!message) return;
+            if (!message || isWaitingForResponse) return;
+
+            const webhookUrl = webhookUrlInput.value.trim();
+            if (!webhookUrl || !isValidUrl(webhookUrl)) {
+                addMessage('⚠️ Error: Debes configurar la URL del webhook de n8n primero.', false);
+                return;
+            }
             
+            // Deshabilitar input mientras procesamos
+            isWaitingForResponse = true;
+            input.disabled = true;
+            sendButton.disabled = true;
+            
+            // Mostrar mensaje del usuario
             addMessage(message, true);
             input.value = '';
             
-            // Simular pensamiento del bot
-            setTimeout(() => {
-                const response = generateBotResponse(message.toLowerCase());
-                addMessage(response, false);
-                
-                // Webhook simulation
-                sendWebhook({
-                    user_message: message,
-                    bot_response: response,
-                    timestamp: new Date().toISOString(),
-                    cart_items: cart.length
-                });
-            }, 1000);
-        }
-
-        function generateBotResponse(message) {
-            const responses = {
-                'hola': '¡Hola! 👋 Bienvenido a NovaShop. ¿En qué puedo ayudarte hoy?',
-                'productos': '📦 Tenemos laptops gaming, smartphones, auriculares, smartwatches, monitores y periféricos. ¿Te interesa algo específico?',
-                'precios': '💰 Nuestros precios van desde €79 (mouse gaming) hasta €2,299 (laptop gaming pro). ¿Qué producto te interesa?',
-                'laptop': '💻 Nuestra Laptop Gaming Pro tiene Intel i9, RTX 4080 y 32GB RAM por €2,299. ¡Perfecta para gaming profesional!',
-                'smartphone': '📱 El Smartphone Nova X tiene cámara 108MP, batería 5000mAh y pantalla AMOLED por €899.',
-                'auriculares': '🎧 Los Auriculares Quantum ofrecen cancelación de ruido y 30h de batería por €299.',
-                'smartwatch': '⌚ El Smartwatch Elite monitorea tu salud 24/7 y tiene GPS por €449.',
-                'monitor': '🖥️ Nuestro Monitor 4K Curved de 32" con 144Hz cuesta €699.',
-                'mouse': '🖱️ El Mouse Gaming RGB con 12 botones programables cuesta €79.',
-                'carrito': `🛒 Tienes ${cart.length} productos en tu carrito: ${cart.join(', ') || 'vacío'}`,
-                'tecnología': '🚀 Hablemos de tecnología: IA, quantum computing, 5G, IoT... ¿Qué te interesa más?',
-                'ia': '🤖 La IA está revolucionando todo: desde asistentes como yo hasta coches autónomos. ¿Qué aspecto te interesa?',
-                'ayuda': '❓ Puedo ayudarte con información de productos, precios, tecnología o cualquier duda sobre la tienda.',
-                'demo': '🎭 Esta es una tienda ficticia para demostrar NovaBot. Los productos no son reales, pero yo sí funciono perfectamente!'
-            };
+            // Mostrar indicador de carga
+            const loadingMessage = addMessage('', false, true);
             
-            for (const [key, response] of Object.entries(responses)) {
-                if (message.includes(key)) {
-                    return response;
-                }
-            }
-            
-            return '🤔 Interesante pregunta. Como asistente de NovaShop, puedo ayudarte con productos, tecnología y más. ¿Podrías ser más específico?';
-        }
-
-        async function sendWebhook(data) {
             try {
-                // Simulated webhook call
-                console.log('Webhook enviado:', data);
+                // Preparar datos para enviar al webhook
+                const requestData = {
+                    message: message,
+                    cart: cart,
+                    cartCount: cart.length,
+                    timestamp: new Date().toISOString(),
+                    sessionId: generateSessionId()
+                };
+
+                // Realizar petición al webhook de n8n
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
                 
-                // En una implementación real, aquí iría:
-                // await fetch('https://tu-webhook-url.com/endpoint', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(data)
-                // });
+                // Remover indicador de carga
+                removeMessage(loadingMessage);
                 
+                // Mostrar respuesta del bot
+                const botResponse = data.response || data.message || 'Lo siento, no pude procesar tu mensaje correctamente.';
+                addMessage(botResponse, false);
+
             } catch (error) {
-                console.error('Error enviando webhook:', error);
+                console.error('Error al comunicarse con el webhook:', error);
+                
+                // Remover indicador de carga
+                removeMessage(loadingMessage);
+                
+                // Mostrar mensaje de error
+                let errorMessage = '❌ Error de conexión: ';
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage += 'No se pudo conectar con el webhook. Verifica que n8n esté ejecutándose y que la URL sea correcta.';
+                } else if (error.message.includes('HTTP error')) {
+                    errorMessage += `El servidor respondió con error ${error.message.split('status: ')[1]}`;
+                } else {
+                    errorMessage += 'Problema de comunicación con el asistente IA. Revisa la consola para más detalles.';
+                }
+                
+                addMessage(errorMessage, false);
+            } finally {
+                // Rehabilitar input
+                isWaitingForResponse = false;
+                input.disabled = false;
+                sendButton.disabled = false;
+                input.focus();
             }
+        }
+
+        function generateSessionId() {
+            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
         // Smooth scrolling for navigation
@@ -669,6 +904,17 @@
                 toggleChatbot();
             }
         }, 3000);
-    </script>
-</body>
-</html>
+
+        // Cargar URL del webhook desde localStorage si existe
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedWebhookUrl = localStorage.getItem('novashop_webhook_url');
+            if (savedWebhookUrl) {
+                webhookUrlInput.value = savedWebhookUrl;
+                webhookUrlInput.dispatchEvent(new Event('input'));
+            }
+        });
+
+        // Guardar URL del webhook en localStorage cuando cambie
+        webhookUrlInput.addEventListener('change', function() {
+            localStorage.setItem('novashop_webhook_url', this.value);
+        });
