@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Shop - Tu Tienda Online</title>
+    <style>
+        /* Reseteo básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2d5a27, #4a8c3a);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #a8d5a1;
+        }
+
+        /* Config Panel */
+        .config-panel {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10000;
+            font-size: 12px;
+            max-width: 300px;
+        }
+
+        .config-panel input {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .config-panel button {
+            background: #4a8c3a;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .config-panel .status {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .config-panel .status.connected { color: green; }
+        .config-panel .status.disconnected { color: red; }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(45, 90, 39, 0.8), rgba(74, 140, 58, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600"><rect fill="%23f0f4f0" width="1000" height="600"/><circle fill="%234a8c3a" opacity="0.1" cx="200" cy="200" r="100"/><circle fill="%234a8c3a" opacity="0.1" cx="800" cy="400" r="150"/></svg>');
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            background: #4a8c3a;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #3a7a2a;
+        }
+
+        /* Productos Section */
+        .products-section {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2d5a27;
+            margin-bottom: 3rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #e8f5e8, #d4f4d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #4a8c3a;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d5a27;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #4a8c3a;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            background: #4a8c3a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .add-to-cart:hover {
+            background: #3a7a2a;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d5a27;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #a8d5a1;
+            text-decoration: none;
+        }
+
+        /* Chat Widget Styles */
+        #chatWidget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: Arial, sans-serif;
+        }
+        
+        #chatButton {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #2d5a27;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(45, 90, 39, 0.4);
+            display: block;
+            transition: all 0.3s ease;
+        }
+        
+        #chatButton:hover {
+            background: #1f3e1a;
+            transform: scale(1.05);
+        }
+        
+        #chatContainer {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        
+        #chatContainer.show {
+            display: flex;
+        }
+        
+        #chatHeader {
+            background: linear-gradient(135deg, #2d5a27, #4a8c3a);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        #chatBody {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .message {
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 80%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .welcome-message {
+            background: #4a8c3a;
+            color: white;
+            text-align: center;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .user-message {
+            background: #4a8c3a;
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .bot-message {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            align-self: flex-start;
+        }
+        
+        .typing {
+            background: white;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            font-style: italic;
+            align-self: flex-start;
+        }
+        
+        #chatFooter {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+            display: flex;
+            gap: 10px;
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        #messageInput:focus {
+            border-color: #4a8c3a;
+        }
+        
+        #sendButton {
+            background: #4a8c3a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        #sendButton:hover {
+            background: #3a7a2a;
+        }
+        
+        #sendButton:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            #chatContainer {
+                width: 300px;
+                height: 450px;
+            }
+
+            .config-panel {
+                position: static;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Configuration Panel -->
+    <div class="config-panel">
+        <strong>🔧 Configuración Webhook</strong>
+        <input type="text" id="webhookInput" placeholder="https://tu-ngrok-url.ngrok.io/webhook/...">
+        <button onclick="updateWebhook()">Actualizar</button>
+        <div id="webhookStatus" class="status disconnected">❌ No configurado</div>
+        <small>Pega aquí tu URL de webhook de n8n</small>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">🌿 Nova Shop</div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#productos">Productos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <h1>Bienvenido a Nova Shop</h1>
+        <p>Descubre nuestra selección premium de productos tecnológicos y gadgets innovadores. Calidad garantizada y atención personalizada.</p>
+        <a href="#productos" class="cta-button">Ver Productos</a>
+    </section>
+
+    <!-- Productos Section -->
+    <section class="products-section" id="productos">
+        <h2 class="section-title">Nuestros Productos</h2>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">📱</div>
+                <div class="product-info">
+                    <h3 class="product-title">Smartphone Pro Max</h3>
+                    <p class="product-description">El último modelo con tecnología avanzada, cámara profesional y batería de larga duración.</p>
+                    <div class="product-price">€899.99</div>
+                    <button class="add-to-cart" onclick="addToCart('Smartphone Pro Max')">Añadir al Carrito</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">💻</div>
+                <div class="product-info">
+                    <h3 class="product-title">Laptop Gaming Elite</h3>
+                    <p class="product-description">Potente laptop para gaming y trabajo profesional con gráficos de alta gama.</p>
+                    <div class="product-price">€1,299.99</div>
+                    <button class="add-to-cart" onclick="addToCart('Laptop Gaming Elite')">Añadir al Carrito</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🎧</div>
+                <div class="product-info">
+                    <h3 class="product-title">Auriculares Wireless Pro</h3>
+                    <p class="product-description">Auriculares inalámbricos con cancelación de ruido y calidad de sonido superior.</p>
+                    <div class="product-price">€199.99</div>
+                    <button class="add-to-cart" onclick="addToCart('Auriculares Wireless Pro')">Añadir al Carrito</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">⌚</div>
+                <div class="product-info">
+                    <h3 class="product-title">Smartwatch Fitness</h3>
+                    <p class="product-description">Reloj inteligente con monitoreo de salud, GPS y resistencia al agua.</p>
+                    <div class="product-price">€299.99</div>
+                    <button class="add-to-cart" onclick="addToCart('Smartwatch Fitness')">Añadir al Carrito</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">📷</div>
+                <div class="product-info">
+                    <h3 class="product-title">Cámara Digital 4K</h3>
+                    <p class="product-description">Cámara profesional con grabación 4K y sistema de estabilización avanzado.</p>
+                    <div class="product-price">€749.99</div>
+                    <button class="add-to-cart" onclick="addToCart('Cámara Digital 4K')">Añadir al Carrito</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🖥️</div>
+                <div class="product-info">
+                    <h3 class="product-title">Monitor 4K UltraWide</h3>
+                    <p class="product-description">Monitor profesional 4K de 32 pulgadas perfecto para trabajo y entretenimiento.</p>
+                    <div class="product-price">€599.99</div>
+                    <button class="add-to-cart" onclick="addToCart('Monitor 4K UltraWide')">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">Términos y Condiciones</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Soporte</a>
+                <a href="https://www.islanovanetworks.com" target="_blank">Isla Nova Networks</a>
+            </div>
+            <p>&copy; 2024 Nova Shop. Todos los derechos reservados.</p>
+            <p>Desarrollado por <a href="https://www.islanovanetworks.com" target="_blank" style="color: #a8d5a1;">Isla Nova Networks</a></p>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div id="chatWidget">
+        <button id="chatButton" onclick="toggleChat()">💬</button>
+        
+        <div id="chatContainer">
+            <div id="chatHeader">
+                🤖 Nova Assistant
+            </div>
+            
+            <div id="chatBody">
+                <div class="message welcome-message">
+                    <strong>¡Hola! 👋 Soy Nova, tu asistente de compras.<br>¿En qué puedo ayudarte hoy?</strong>
+                </div>
+            </div>
+            
+            <div id="chatFooter">
+                <input type="text" id="messageInput" placeholder="Pregúntame sobre nuestros productos..." maxlength="500">
+                <button id="sendButton" onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales para el chat
+        var isOpen = false;
+        var isProcessing = false;
+        var chatId = null;
+        var WEBHOOK_URL = null;
+        var WEBHOOK_ROUTE = 'general';
+        
+        // Generar ID único del chat
+        function generateChatId() {
+            if (!chatId) {
+                chatId = "novashop_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+            }
+            return chatId;
+        }
+        
+        // Actualizar webhook dinámicamente
+        function updateWebhook() {
+            var input = document.getElementById('webhookInput');
+            var status = document.getElementById('webhookStatus');
+            var url = input.value.trim();
+            
+            if (url && (url.startsWith('https://') || url.startsWith('http://'))) {
+                WEBHOOK_URL = url;
+                status.className = 'status connected';
+                status.innerHTML = '✅ Conectado';
+                
+                // Guardar en sessionStorage
+                sessionStorage.setItem('webhookUrl', url);
+                
+                addMessage('🔗 Webhook actualizado correctamente. ¡Ya puedes chatear!', false, false);
+            } else {
+                status.className = 'status disconnected';
+                status.innerHTML = '❌ URL inválida';
+            }
+        }
+        
+        // Cargar webhook guardado
+        function loadSavedWebhook() {
+            var saved = sessionStorage.getItem('webhookUrl');
+            if (saved) {
+                document.getElementById('webhookInput').value = saved;
+                updateWebhook();
+            }
+        }
+        
+        // Toggle del chat
+        function toggleChat() {
+            var container = document.getElementById('chatContainer');
+            var button = document.getElementById('chatButton');
+            
+            isOpen = !isOpen;
+            
+            if (isOpen) {
+                container.classList.add('show');
+                button.innerHTML = '✕';
+                document.getElementById('messageInput').focus();
+            } else {
+                container.classList.remove('show');
+                button.innerHTML = '💬';
+            }
+        }
+        
+        // Scroll automático al final del chat
+        function scrollToBottom() {
+            var chatBody = document.getElementById('chatBody');
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        
+        // Agregar mensaje al chat
+        function addMessage(content, isUser, isTyping) {
+            var chatBody = document.getElementById('chatBody');
+            var messageDiv = document.createElement('div');
+            
+            if (isTyping) {
+                messageDiv.className = 'message typing';
+            } else if (isUser) {
+                messageDiv.className = 'message user-message';
+            } else {
+                messageDiv.className = 'message bot-message';
+            }
+            
+            messageDiv.innerHTML = content;
+            chatBody.appendChild(messageDiv);
+            scrollToBottom();
+            
+            return messageDiv;
+        }
+        
+        // Enviar mensaje al chat
+        function sendMessage() {
+            var input = document.getElementById('messageInput');
+            var button = document.getElementById('sendButton');
+            var message = input.value.trim();
+            
+            if (!message || isProcessing) return;
+            
+            // Verificar si hay webhook configurado
+            if (!WEBHOOK_URL) {
+                addMessage('⚠️ <strong>Configura primero tu webhook</strong><br>Pega la URL de tu webhook de n8n en el panel superior.', false, false);
+                return;
+            }
+            
+            // Deshabilitar controles
+            isProcessing = true;
+            input.disabled = true;
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+            
+            // Agregar mensaje del usuario
+            addMessage(message, true, false);
+            input.value = '';
+            
+            // Mostrar indicador de escritura
+            var typingMessage = addMessage('Nova está escribiendo...', false, true);
+            
+            // Enviar al webhook de n8n
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', WEBHOOK_URL, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    // Remover indicador de escritura
+                    if (typingMessage && typingMessage.parentNode) {
+                        typingMessage.parentNode.removeChild(typingMessage);
+                    }
+                    
+                    if (xhr.status === 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            var botResponse = response.output || response.message || '✅ Mensaje recibido correctamente.';
+                            addMessage(botResponse, false, false);
+                        } catch (e) {
+                            addMessage('✅ Respuesta recibida del servidor.', false, false);
+                        }
+                    } else {
+                        addMessage('❌ Error al conectar con el servidor. Verifica tu webhook.', false, false);
+                    }
+                    
+                    // Rehabilitar controles
+                    isProcessing = false;
+                    input.disabled = false;
+                    button.disabled = false;
+                    button.textContent = 'Enviar';
+                    input.focus();
+                }
+            };
+            
+            // Datos a enviar
+            var data = {
+                chatId: generateChatId(),
+                message: message,
+                route: WEBHOOK_ROUTE,
+                timestamp: new Date().toISOString(),
+                source: 'nova-shop'
+            };
+            
+            xhr.send(JSON.stringify(data));
+        }
+        
+        // Función para agregar productos al carrito (simulada)
+        function addToCart(productName) {
+            alert('¡' + productName + ' añadido al carrito! 🛒\n\nPuedes preguntar a Nova sobre este producto usando el chat.');
+        }
+        
+        // Eventos cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            var input = document.getElementById('messageInput');
+            
+            // Cargar webhook guardado
+            loadSavedWebhook();
+            
+            // Enviar con Enter
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // Enter en webhook input
+            document.getElementById('webhookInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    updateWebhook();
+                }
+            });
+            
+            // Scroll suave para los enlaces
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Mensaje inicial si no hay webhook
+            setTimeout(function() {
+                if (!WEBHOOK_URL) {
+                    addMessage('🛠️ <strong>¡Bienvenido!</strong><br>Para activar el chat, configura tu webhook de n8n en el panel superior izquierdo.', false, false);
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
