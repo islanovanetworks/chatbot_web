@@ -723,7 +723,7 @@
             sendButton.textContent = '...';
             
             const loadingMsg = addMessage('🤖 Pensando...', false, true);
-            
+
             try {
                 const response = await fetch(webhookUrl, {
                     method: 'POST',
@@ -737,23 +737,25 @@
                         user_id: 'demo_user'
                     })
                 });
-                
+            
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+            
                 const data = await response.json();
-                removeLoadingMessage();
-                
-                // Assuming the AI response is in data.response or data.message
-                const botResponse = data.response || data.message || data.text || 'Lo siento, no pude procesar tu mensaje.';
-                addMessage(botResponse, false);
-                
+            
+                // ✅ Mostrar la respuesta real del agente IA
+                if (data.output) {
+                    addMessage(data.output, false);
+                } else {
+                    addMessage("⚠️ El asistente no devolvió ninguna respuesta útil.", false);
+                }
+            
             } catch (error) {
-                console.error('Error:', error);
-                removeLoadingMessage();
-                addMessage('❌ Error de conexión. Verifica la URL del webhook y que n8n esté ejecutándose.', false);
-            } finally {
+                console.error('Error al procesar la solicitud:', error);
+                addMessage("❌ Lo siento, no pude procesar tu mensaje.", false);
+            }
+             finally {
                 isProcessing = false;
                 sendButton.disabled = false;
                 sendButton.textContent = 'Enviar';
