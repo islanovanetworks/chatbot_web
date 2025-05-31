@@ -1,452 +1,259 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Isla Nova Shop</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background: #f5f7fa; }
-
-        /* Header */
-        header { background: linear-gradient(135deg, #1a4d1a, #2d5a27); box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        nav { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
-        .logo { font-size: 2rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
-        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-        .nav-links a { color: #fff; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 8px; transition: all 0.3s; }
-        .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.1); }
-
-        /* Config Panel */
-        .config-panel { position: fixed; top: 15px; left: 15px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); z-index: 1000; font-size: 13px; max-width: 320px; border: 1px solid #e0e6ed; }
-        .config-panel h4 { color: #2d5a27; margin-bottom: 12px; font-size: 14px; }
-        .config-panel input { width: 100%; padding: 10px; margin: 8px 0; border: 2px solid #e0e6ed; border-radius: 8px; font-size: 12px; transition: border-color 0.3s; }
-        .config-panel input:focus { border-color: #2d5a27; outline: none; }
-        .config-panel button { background: #2d5a27; color: #fff; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; transition: background 0.3s; }
-        .config-panel button:hover { background: #1a4d1a; }
-        .status { font-weight: 600; margin-top: 8px; padding: 8px; border-radius: 6px; text-align: center; }
-        .status.connected { background: #d4edda; color: #155724; }
-        .status.disconnected { background: #f8d7da; color: #721c24; }
-
-        /* Hero */
-        .hero { background: linear-gradient(135deg, rgba(26,77,26,0.95), rgba(45,90,39,0.95)), url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gMTAwIDAgTCAwIDAgMCAxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+'); color: #fff; text-align: center; padding: 5rem 2rem; }
-        .hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; font-weight: 700; text-shadow: 2px 4px 8px rgba(0,0,0,0.3); }
-        .hero p { font-size: 1.3rem; margin-bottom: 2.5rem; max-width: 700px; margin-left: auto; margin-right: auto; opacity: 0.95; }
-        .hero-stats { display: flex; justify-content: center; gap: 3rem; margin-top: 3rem; }
-        .stat { text-align: center; }
-        .stat-number { font-size: 2.5rem; font-weight: 700; color: #4CAF50; }
-        .stat-label { font-size: 0.9rem; opacity: 0.8; }
-
-        /* Products */
-        .products { max-width: 1400px; margin: 4rem auto; padding: 0 2rem; }
-        .section-title { font-size: 3rem; color: #1a4d1a; text-align: center; margin-bottom: 4rem; font-weight: 700; }
-        .product-categories { display: flex; justify-content: center; gap: 2rem; margin-bottom: 3rem; }
-        .category-btn { padding: 12px 24px; border: 2px solid #2d5a27; background: transparent; color: #2d5a27; border-radius: 25px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
-        .category-btn.active, .category-btn:hover { background: #2d5a27; color: #fff; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; }
-        .product { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; border: 1px solid #e0e6ed; }
-        .product:hover { transform: translateY(-8px); box-shadow: 0 16px 48px rgba(0,0,0,0.12); }
-        .product-img { width: 100%; height: 280px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); position: relative; overflow: hidden; }
-        .product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-        .product:hover .product-img img { transform: scale(1.05); }
-        .brand-badge { position: absolute; top: 15px; left: 15px; background: rgba(45,90,39,0.9); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .product-info { padding: 2rem; }
-        .product-title { font-size: 1.4rem; font-weight: 700; color: #1a4d1a; margin-bottom: 0.8rem; }
-        .product-desc { color: #666; margin-bottom: 1.2rem; font-size: 0.95rem; line-height: 1.5; }
-        .product-specs { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
-        .spec { background: #f8f9fa; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: #666; }
-        .product-price { font-size: 1.8rem; font-weight: 700; color: #2d5a27; margin-bottom: 1.5rem; }
-        .price-old { font-size: 1.2rem; color: #999; text-decoration: line-through; margin-left: 8px; }
-        .btn-cart { background: #2d5a27; color: #fff; border: none; padding: 14px 24px; border-radius: 12px; cursor: pointer; width: 100%; font-size: 1rem; font-weight: 600; transition: background 0.3s; }
-        .btn-cart:hover { background: #1a4d1a; }
-
-        /* Chat */
-        #chatWidget { position: fixed; bottom: 25px; right: 25px; z-index: 9999; }
-        #chatButton { width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(135deg, #2d5a27, #4CAF50); border: none; cursor: pointer; color: #fff; font-size: 28px; box-shadow: 0 8px 32px rgba(45,90,39,0.3); transition: all 0.3s; }
-        #chatButton:hover { transform: scale(1.1); box-shadow: 0 12px 40px rgba(45,90,39,0.4); }
-        #chatContainer { position: absolute; bottom: 80px; right: 0; width: 380px; height: 550px; background: #fff; border-radius: 16px; box-shadow: 0 16px 64px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; border: 1px solid #e0e6ed; }
-        #chatContainer.show { display: flex; }
-        #chatHeader { background: linear-gradient(135deg, #1a4d1a, #2d5a27); color: #fff; padding: 20px; text-align: center; font-weight: 700; font-size: 18px; }
-        #chatBody { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 12px; }
-        .message { padding: 12px 16px; border-radius: 18px; font-size: 14.5px; line-height: 1.5; max-width: 85%; animation: fadeIn 0.4s; }
-        .welcome-message { background: #2d5a27; color: #fff; text-align: center; margin: 0 auto; max-width: 100%; }
-        .user-message { background: #2d5a27; color: #fff; align-self: flex-end; margin-left: auto; }
-        .bot-message { background: #fff; color: #333; border: 1px solid #e0e6ed; align-self: flex-start; }
-        .typing { background: #fff; color: #666; border: 1px solid #e0e6ed; font-style: italic; align-self: flex-start; }
-        #chatFooter { padding: 20px; border-top: 1px solid #e0e6ed; background: #fff; display: flex; gap: 12px; }
-        #messageInput { flex: 1; padding: 12px 18px; border: 2px solid #e0e6ed; border-radius: 25px; outline: none; font-size: 14px; transition: border-color 0.3s; }
-        #messageInput:focus { border-color: #2d5a27; }
-        #sendButton { background: #2d5a27; color: #fff; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-weight: 600; transition: background 0.3s; }
-        #sendButton:hover { background: #1a4d1a; }
-        #sendButton:disabled { background: #ccc; cursor: not-allowed; }
-
-        /* Footer */
-        footer { background: #1a4d1a; color: #fff; text-align: center; padding: 3rem 2rem; margin-top: 5rem; }
-        .footer-content { max-width: 1200px; margin: 0 auto; }
-        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem; }
-        .footer-links a { color: #4CAF50; text-decoration: none; font-weight: 500; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .products-grid { grid-template-columns: 1fr; }
-            .nav-links { gap: 1rem; }
-            #chatContainer { width: 320px; height: 480px; }
-            .config-panel { position: static; margin: 15px; }
-            .hero-stats { flex-direction: column; gap: 1.5rem; }
-            .product-categories { flex-wrap: wrap; gap: 1rem; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaBot | Isla Nova Networks</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f2f4f7;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    .warning-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+    }
+    .warning-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 90%;
+    }
+    .warning-box h2 {
+      color: #2d5a27;
+      margin-bottom: 1rem;
+    }
+    .warning-box button {
+      background: #2d5a27;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      cursor: pointer;
+    }
+    header {
+      background: #2d5a27;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+    header h1 {
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    main {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+      text-align: center;
+    }
+    main h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #2d5a27;
+    }
+    main p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    #chatWidget {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 9999;
+    }
+    #chatButton {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2d5a27, #4CAF50);
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      font-size: 28px;
+      box-shadow: 0 8px 32px rgba(45,90,39,0.3);
+      transition: all 0.3s;
+    }
+    #chatButton:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 40px rgba(45,90,39,0.4);
+    }
+    #chatContainer {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 380px;
+      height: 550px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 16px 64px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #e0e6ed;
+    }
+    #chatContainer.show {
+      display: flex;
+    }
+    #chatHeader {
+      background: linear-gradient(135deg, #1a4d1a, #2d5a27);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    #chatBody {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      max-width: 85%;
+      animation: fadeIn 0.4s;
+    }
+    .welcome-message {
+      background: #2d5a27;
+      color: #fff;
+      text-align: center;
+      margin: 0 auto;
+    }
+    .user-message {
+      background: #2d5a27;
+      color: #fff;
+      align-self: flex-end;
+    }
+    .bot-message {
+      background: #fff;
+      color: #333;
+      border: 1px solid #e0e6ed;
+      align-self: flex-start;
+    }
+    .typing {
+      background: #fff;
+      color: #666;
+      border: 1px solid #e0e6ed;
+      font-style: italic;
+      align-self: flex-start;
+    }
+    #chatFooter {
+      padding: 20px;
+      border-top: 1px solid #e0e6ed;
+      background: #fff;
+      display: flex;
+      gap: 12px;
+    }
+    #messageInput {
+      flex: 1;
+      padding: 12px 18px;
+      border: 2px solid #e0e6ed;
+      border-radius: 25px;
+      outline: none;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    #messageInput:focus {
+      border-color: #2d5a27;
+    }
+    #sendButton {
+      background: #2d5a27;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    #sendButton:hover {
+      background: #1a4d1a;
+    }
+    #sendButton:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-    <div class="config-panel">
-        <h4>🔧 Configuración Webhook</h4>
-        <input type="text" id="webhookInput" placeholder="https://tu-webhook-url.ngrok.io/webhook">
-        <button onclick="updateWebhook()">Conectar</button>
-        <div id="webhookStatus" class="status disconnected">❌ Desconectado</div>
-        <small>URL del webhook de n8n para el chatbot</small>
+  <div class="warning-overlay" id="warningOverlay">
+    <div class="warning-box">
+      <h2>🌐 Sitio de prueba</h2>
+      <p>Esta web es ficticia y creada por <strong>Isla Nova Networks</strong>. Su única finalidad es que pruebes <strong>NovaBot</strong>.</p>
+      <button onclick="document.getElementById('warningOverlay').style.display='none'">Aceptar</button>
     </div>
+  </div>
 
-    <header>
-        <nav>
-            <div class="logo">Isla Nova Shop</div>
-            <ul class="nav-links">
-                <li><a href="#inicio" class="active">Inicio</a></li>
-                <li><a href="#productos">Productos</a></li>
-                <li><a href="#tienda">Tienda</a></li>
-                <li><a href="#nosotros">Quiénes Somos</a></li>
-            </ul>
-        </nav>
-    </header>
+  <header>
+    <h1>Bienvenido a NovaBot</h1>
+  </header>
 
-    <section class="hero" id="inicio">
-        <h1>Isla Nova Shop</h1>
-        <p>Descubre la mejor selección de dispositivos tecnológicos de marcas líderes como Apple, HP y Lenovo. Calidad garantizada y soporte técnico especializado.</p>
-        <div class="hero-stats">
-            <div class="stat">
-                <div class="stat-number">10K+</div>
-                <div class="stat-label">Clientes Satisfechos</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">500+</div>
-                <div class="stat-label">Productos Premium</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">Soporte Técnico</div>
-            </div>
+  <main>
+    <h2>Asistente virtual inteligente para tu tienda</h2>
+    <p>Puedes hacer clic en el botón inferior derecho para hablar con NovaBot y preguntarle sobre productos, precios o servicios. ¡Pruébalo!</p>
+  </main>
+
+  <!-- Chatbot container (copiado sin cambios para mantener funcionalidad) -->
+  <div id="chatWidget">
+    <button id="chatButton" onclick="toggleChat()">💬</button>
+    <div id="chatContainer">
+      <div id="chatHeader">🤖 Nova Assistant</div>
+      <div id="chatBody">
+        <div class="message welcome-message">
+          <strong>¡Hola! 👋🏽 Soy NovaBot, tu asistente IA<br>¿En qué puedo ayudarte?</strong>
         </div>
-    </section>
-
-    <section class="products" id="productos">
-        <h2 class="section-title">Nuestros Productos</h2>
-        
-        <div class="product-categories">
-            <button class="category-btn active">Smartphones</button>
-            <button class="category-btn">Ordenadores</button>
-            <button class="category-btn">Tablets</button>
-        </div>
-
-        <div class="products-grid">
-            <div class="product">
-                <div class="product-img">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzIxMjEyMSIvPjxyZWN0IHg9IjE1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMzMzIiByeD0iMTUiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxMDAiIHI9IjE1IiBmaWxsPSIjNTU1Ii8+PHJlY3QgeD0iMTcwIiB5PSIyMTAiIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMCIgZmlsbD0iIzU1NSIgcng9IjEwIi8+PC9zdmc+" alt="iPhone 15 Pro">
-                    <div class="brand-badge">Apple</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">iPhone 15 Pro Max</h3>
-                    <p class="product-desc">El iPhone más avanzado con chip A17 Pro, sistema de cámaras profesional y pantalla Super Retina XDR de 6.7"</p>
-                    <div class="product-specs">
-                        <span class="spec">256GB</span>
-                        <span class="spec">5G</span>
-                        <span class="spec">Pro Camera</span>
-                    </div>
-                    <div class="product-price">€1,349.00 <span class="price-old">€1,449.00</span></div>
-                    <button class="btn-cart" onclick="addToCart('iPhone 15 Pro Max')">Añadir al Carrito</button>
-                </div>
-            </div>
-
-            <div class="product">
-                <div class="product-img">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzAwNTI4OCIvPjxyZWN0IHg9IjUwIiB5PSI4MCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiMwMDczYzIiIHJ4PSI4Ii8+PHJlY3QgeD0iNzAiIHk9IjEwMCIgd2lkdGg9IjI2MCIgaGVpZ2h0PSI5MCIgZmlsbD0iIzAwNGM5MyIgcng9IjQiLz48Y2lyY2xlIGN4PSIzMjAiIGN5PSIxODAiIHI9IjgiIGZpbGw9IiNmZmYiLz48L3N2Zz4=" alt="HP Pavilion">
-                    <div class="brand-badge">HP</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">HP Pavilion Gaming 15</h3>
-                    <p class="product-desc">Portátil gaming con procesador Intel Core i7, NVIDIA GeForce RTX 4060 y pantalla de 15.6" FHD 144Hz</p>
-                    <div class="product-specs">
-                        <span class="spec">Intel i7</span>
-                        <span class="spec">RTX 4060</span>
-                        <span class="spec">16GB RAM</span>
-                    </div>
-                    <div class="product-price">€1,199.00 <span class="price-old">€1,299.00</span></div>
-                    <button class="btn-cart" onclick="addToCart('HP Pavilion Gaming 15')">Añadir al Carrito</button>
-                </div>
-            </div>
-
-            <div class="product">
-                <div class="product-img">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2Y1ZjVmNSIvPjxyZWN0IHg9IjgwIiB5PSI2MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIxODAiIGZpbGw9IiNmZmYiIHN0cm9rZT0iI2RkZCIgc3Ryb2tlLXdpZHRoPSIyIiByeD0iMTAiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyNzAiIHI9IjE1IiBmaWxsPSIjY2NjIi8+PC9zdmc+" alt="iPad Air">
-                    <div class="brand-badge">Apple</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">iPad Air M2</h3>
-                    <p class="product-desc">iPad Air con chip M2, pantalla Liquid Retina de 10.9" y compatibilidad con Apple Pencil Pro</p>
-                    <div class="product-specs">
-                        <span class="spec">M2 Chip</span>
-                        <span class="spec">128GB</span>
-                        <span class="spec">10.9"</span>
-                    </div>
-                    <div class="product-price">€729.00</div>
-                    <button class="btn-cart" onclick="addToCart('iPad Air M2')">Añadir al Carrito</button>
-                </div>
-            </div>
-
-            <div class="product">
-                <div class="product-img">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzJlMmUyZSIvPjxyZWN0IHg9IjUwIiB5PSI4MCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiM0NDQ0NDQiIHJ4PSI4Ii8+PHJlY3QgeD0iNzAiIHk9IjEwMCIgd2lkdGg9IjI2MCIgaGVpZ2h0PSI5MCIgZmlsbD0iIzMzMzMzMyIgcng9IjQiLz48Y2lyY2xlIGN4PSIzMjAiIGN5PSIxODAiIHI9IjgiIGZpbGw9IiNlNTAwM2QiLz48L3N2Zz4=" alt="ThinkPad X1">
-                    <div class="brand-badge">Lenovo</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">ThinkPad X1 Carbon Gen 11</h3>
-                    <p class="product-desc">Ultrabook empresarial premium con Intel Core i7 vPro, pantalla 14" OLED y construcción ultraligera</p>
-                    <div class="product-specs">
-                        <span class="spec">Intel i7 vPro</span>
-                        <span class="spec">32GB RAM</span>
-                        <span class="spec">1TB SSD</span>
-                    </div>
-                    <div class="product-price">€2,149.00</div>
-                    <button class="btn-cart" onclick="addToCart('ThinkPad X1 Carbon')">Añadir al Carrito</button>
-                </div>
-            </div>
-
-            <div class="product">
-                <div class="product-img">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzI3MjcyNyIvPjxyZWN0IHg9IjE2MCIgeT0iNjAiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxODAiIGZpbGw9IiMzMzMiIHJ4PSIxMiIvPjxyZWN0IHg9IjE3NSIgeT0iODAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI5MCIgZmlsbD0iIzQ0NCIgcng9IjQiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjEwIiBmaWxsPSIjNjY2Ii8+PC9zdmc+" alt="Samsung Galaxy">
-                    <div class="brand-badge">Samsung</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">Galaxy S24 Ultra</h3>
-                    <p class="product-desc">Smartphone premium con S Pen integrado, cámara de 200MP y pantalla Dynamic AMOLED 2X de 6.8"</p>
-                    <div class="product-specs">
-                        <span class="spec">256GB</span>
-                        <span class="spec">S Pen</span>
-                        <span class="spec">200MP</span>
-                    </div>
-                    <div class="product-price">€1,459.00</div>
-                    <button class="btn-cart" onclick="addToCart('Galaxy S24 Ultra')">Añadir al Carrito</button>
-                </div>
-            </div>
-
-            <div class="product">
-                <div class="product-img">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2Y4ZjhmZiIvPjxyZWN0IHg9IjcwIiB5PSI3MCIgd2lkdGg9IjI2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiNmZmYiIHN0cm9rZT0iI2RkZCIgc3Ryb2tlLXdpZHRoPSIyIiByeD0iMTIiLz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIxNTAiIHI9IjMwIiBmaWxsPSIjZjVmNWY1Ii8+PHJlY3QgeD0iMTgwIiB5PSIyNDAiIHdpZHRoPSI0MCIgaGVpZ2h0PSIyNCIgZmlsbD0iI2NjYyIgcng9IjEyIi8+PC9zdmc+" alt="Lenovo Tab">
-                    <div class="brand-badge">Lenovo</div>
-                </div>
-                <div class="product-info">
-                    <h3 class="product-title">Tab P12 Pro</h3>
-                    <p class="product-desc">Tablet premium con pantalla OLED de 12.6", procesador MediaTek Dimensity 7050 y soporte para stylus</p>
-                    <div class="product-specs">
-                        <span class="spec">8GB RAM</span>
-                        <span class="spec">256GB</span>
-                        <span class="spec">OLED 12.6"</span>
-                    </div>
-                    <div class="product-price">€649.00 <span class="price-old">€749.00</span></div>
-                    <button class="btn-cart" onclick="addToCart('Lenovo Tab P12 Pro')">Añadir al Carrito</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="#">Términos y Condiciones</a>
-                <a href="#">Política de Privacidad</a>
-                <a href="#">Soporte Técnico</a>
-                <a href="https://www.islanovanetworks.com" target="_blank">Isla Nova Networks</a>
-            </div>
-            <p>&copy; 2024 Nova Shop. Todos los derechos reservados.</p>
-            <p>Desarrollado por <a href="https://www.islanovanetworks.com" target="_blank" style="color: #4CAF50;">Isla Nova Networks</a></p>
-        </div>
-    </footer>
-
-    <div id="chatWidget">
-        <button id="chatButton" onclick="toggleChat()">💬</button>
-        
-        <div id="chatContainer">
-            <div id="chatHeader">🤖 Nova Assistant</div>
-            
-            <div id="chatBody">
-                <div class="message welcome-message">
-                    <strong>¡Hola! 👋🏽 Soy NovaBot, tu asistente IA<br>¿En qué puedo ayudarte?</strong>
-                </div>
-            </div>
-            
-            <div id="chatFooter">
-                <input type="text" id="messageInput" placeholder="Pregúntame sobre productos, precios, características..." maxlength="500">
-                <button id="sendButton" onclick="sendMessage()">Enviar</button>
-            </div>
-        </div>
+      </div>
+      <div id="chatFooter">
+        <input type="text" id="messageInput" placeholder="Pregúntame sobre productos, precios, características..." maxlength="500">
+        <button id="sendButton" onclick="sendMessage()">Enviar</button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        var isOpen = false, isProcessing = false, chatId = null, WEBHOOK_URL = null;
-        
-        function generateChatId() {
-            if (!chatId) chatId = "novashop_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-            return chatId;
+  <script>
+    const links = document.querySelectorAll('a, button:not(#sendButton):not(#chatButton)');
+    links.forEach(el => {
+      el.addEventListener('click', e => {
+        if (!e.target.closest('#chatContainer') && !e.target.closest('#chatButton')) {
+          e.preventDefault();
+          document.getElementById('warningOverlay').style.display = 'flex';
         }
-        
-        function updateWebhook() {
-            var input = document.getElementById('webhookInput');
-            var status = document.getElementById('webhookStatus');
-            var url = input.value.trim();
-            
-            if (url && (url.startsWith('https://') || url.startsWith('http://'))) {
-                WEBHOOK_URL = url;
-                status.className = 'status connected';
-                status.innerHTML = '✅ Conectado';
-                sessionStorage.setItem('webhookUrl', url);
-                addMessage('🔗 Webhook configurado correctamente. ¡El chatbot está listo!', false, false);
-            } else {
-                status.className = 'status disconnected';
-                status.innerHTML = '❌ URL inválida';
-            }
-        }
-        
-        function loadSavedWebhook() {
-            var saved = sessionStorage.getItem('webhookUrl');
-            if (saved) {
-                document.getElementById('webhookInput').value = saved;
-                updateWebhook();
-            }
-        }
-        
-        function toggleChat() {
-            var container = document.getElementById('chatContainer');
-            var button = document.getElementById('chatButton');
-            
-            isOpen = !isOpen;
-            
-            if (isOpen) {
-                container.classList.add('show');
-                button.innerHTML = '✕';
-                document.getElementById('messageInput').focus();
-            } else {
-                container.classList.remove('show');
-                button.innerHTML = '💬';
-            }
-        }
-        
-        function scrollToBottom() {
-            var chatBody = document.getElementById('chatBody');
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }
-        
-        function addMessage(content, isUser, isTyping) {
-            var chatBody = document.getElementById('chatBody');
-            var messageDiv = document.createElement('div');
-            
-            messageDiv.className = 'message ' + (isTyping ? 'typing' : isUser ? 'user-message' : 'bot-message');
-            messageDiv.innerHTML = content;
-            chatBody.appendChild(messageDiv);
-            scrollToBottom();
-            
-            return messageDiv;
-        }
-        
-        function sendMessage() {
-            var input = document.getElementById('messageInput');
-            var button = document.getElementById('sendButton');
-            var message = input.value.trim();
-            
-            if (!message || isProcessing) return;
-            
-            if (!WEBHOOK_URL) {
-                addMessage('⚠️ <strong>Configura el webhook</strong><br>Introduce la URL de tu webhook de n8n en el panel superior.', false, false);
-                return;
-            }
-            
-            isProcessing = true;
-            input.disabled = true;
-            button.disabled = true;
-            button.textContent = 'Enviando...';
-            
-            addMessage(message, true, false);
-            input.value = '';
-            
-            var typingMessage = addMessage('Nova está escribiendo...', false, true);
-            
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', WEBHOOK_URL, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (typingMessage && typingMessage.parentNode) {
-                        typingMessage.parentNode.removeChild(typingMessage);
-                    }
-                    
-                    if (xhr.status === 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            var botResponse = response.output || response.message || '✅ Mensaje procesado correctamente.';
-                            addMessage(botResponse, false, false);
-                        } catch (e) {
-                            addMessage('✅ Respuesta procesada del servidor.', false, false);
-                        }
-                    } else {
-                        addMessage('❌ Error de conexión. Verifica tu webhook y vuelve a intentarlo.', false, false);
-                    }
-                    
-                    isProcessing = false;
-                    input.disabled = false;
-                    button.disabled = false;
-                    button.textContent = 'Enviar';
-                    input.focus();
-                }
-            };
-            
-            var data = {
-                chatId: generateChatId(),
-                message: message,
-                route: 'general',
-                timestamp: new Date().toISOString(),
-                source: 'nova-shop'
-            };
-            
-            xhr.send(JSON.stringify(data));
-        }
-        
-        function addToCart(productName) {
-            alert('¡' + productName + ' añadido al carrito! 🛒\n\nPuedes consultar más detalles con Nova en el chat.');
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSavedWebhook();
-            
-            document.getElementById('messageInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-            
-            document.getElementById('webhookInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    updateWebhook();
-                }
-            });
-            
-            setTimeout(function() {
-                if (!WEBHOOK_URL) {
-                    addMessage('🛠️ <strong>¡Bienvenido a Nova Shop!</strong><br>Para activar el asistente virtual, configura tu webhook de n8n en el panel superior.', false, false);
-                }
-            }, 3000);
-        });
-    </script>
+      });
+    });
+  </script>
+
+  <!-- Añade aquí el script original del chatbot sin modificaciones para mantener el webhook funcionando -->
+  <!-- ... -->
 </body>
 </html>
