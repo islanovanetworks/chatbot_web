@@ -659,11 +659,23 @@
                 alert('❌ Por favor, introduce una URL válida');
             }
         }
+        
         function parseMarkdownToHTML(text) {
-            return text
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // **negrita**
-                .replace(/\[(.+?)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" style="color: #5fbf84;">$1</a>'); // [texto](url)
+            // Asegura que no se escape contenido HTML válido ya presente (como <br>)
+            let safe = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+            // Restaura <br> reales si ya venían como texto
+            safe = safe.replace(/&lt;br&gt;/g, '<br>');
+        
+            // Negrita: **texto**
+            safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        
+            // Enlaces: [texto](url)
+            safe = safe.replace(/\[(.+?)\]\((https?:\/\/[^\s]+?)\)/g, '<a href="$2" target="_blank" style="color: #5fbf84;">$1</a>');
+        
+            return safe;
         }
+        
         function toggleChatbot() {
             const window = document.getElementById('chatbotWindow');
             chatbotOpen = !chatbotOpen;
