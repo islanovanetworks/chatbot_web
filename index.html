@@ -680,7 +680,7 @@
             const messagesContainer = document.getElementById('chatbotMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'} ${isLoading ? 'loading' : ''}`;
-            messageDiv.textContent = message;
+            messageDiv.textContent = message.replace(/\n/g, '<br>');
             if (isLoading) messageDiv.id = 'loadingMessage';
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
