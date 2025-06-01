@@ -661,12 +661,9 @@
         }
         function parseMarkdownToHTML(text) {
             return text
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // negrita
-                .replace(/\[(.+?)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank">$1</a>') // enlace
-                .replace(/\n/g, '<br>'); // salto de línea
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // **negrita**
+                .replace(/\[(.+?)\]\((https?:\/\/[^\s]+)\)/g, '<a href="$2" target="_blank" style="color: #5fbf84;">$1</a>'); // [texto](url)
         }
-
-
         function toggleChatbot() {
             const window = document.getElementById('chatbotWindow');
             chatbotOpen = !chatbotOpen;
