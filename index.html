@@ -661,29 +661,26 @@
         }
         
         function parseMarkdownToHTML(text) {
-            // Asegura que no se escape contenido HTML válido ya presente (como <br>)
-            let safe = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // Solo convierte Markdown básico si viene sin etiquetas HTML.
+            // Si ya hay <a> o <br>, no escapa ni altera.
         
-            // Restaura <br> reales si ya venían como texto
-            safe = safe.replace(/&lt;br&gt;/g, '<br>');
+            // Convertir negritas Markdown a <strong>
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
         
-            // Convertir saltos de línea dobles en párrafos y simples en <br>
-            safe = safe.replace(/\n\n/g, '</p><p>');
-            safe = safe.replace(/\n/g, '<br>');
-            safe = '<p>' + safe + '</p>';
+            // Convertir enlaces Markdown a <a>
+            text = text.replace(/\[(.+?)\]\((https?:\/\/[^\s]+?)\)/g, '<a href="$2" target="_blank" style="color: #5fbf84;">$1</a>');
         
-            // Negrita: **texto**
-            safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            // Convertir saltos de línea a <br>
+            text = text.replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>');
         
-            // Enlaces: [texto](url)
-            safe = safe.replace(/\[(.+?)\]\((https?:\/\/[^\s]+?)\)/g, '<a href="$2" target="_blank" style="color: #5fbf84;">$1</a>');
+            // Envolver en <p> si no tiene ninguna etiqueta de bloque
+            if (!/^<p>/.test(text)) {
+                text = `<p>${text}</p>`;
+            }
         
-            // Bullets con **•**
-            safe = safe.replace(/\*\*•\*\*/g, '<strong>•</strong>');
-        
-            return safe;
+            return text;
         }
-        
+
         function toggleChatbot() {
             const window = document.getElementById('chatbotWindow');
             chatbotOpen = !chatbotOpen;
